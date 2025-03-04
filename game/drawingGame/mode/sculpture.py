@@ -51,37 +51,10 @@ class Sculpture:
                             return  # 게임 종료
 
     def _HandleMouseMove(self, curMousePos):
-        if not self._oldMousePos or not self._pressingPower:
-            self._oldMousePos = curMousePos
-            return
+        if self._oldMousePos and self._pressingPower:
+            pygame.draw.line(self._screen, "black", self._oldMousePos, curMousePos, self._pressingPower)
+            pygame.display.update()
 
-        # 너무 미세한 움직임은 그리지 않는다
-        if math.dist(self._oldMousePos, curMousePos) < 10:
-            return
-
-        # 그려진 직선에 대한 수직 선분을 구하자
-        dx = curMousePos[0] - self._oldMousePos[0]
-        dy = curMousePos[1] - self._oldMousePos[1]
-        if dy == 0:
-            dy = 0.0001
-        orthogonalSlope = -dx/dy
-
-        # 선분의 길이는 정해져 있음
-        lineLength = self._pressingPower
-        diff_x = lineLength / math.sqrt(1 + orthogonalSlope ** 2)
-        diff_y = orthogonalSlope * diff_x
-
-        # 해당 선분이 쭉 연결된 사각형을 그리자
-        edge1 = (curMousePos[0] + diff_x, curMousePos[1] + diff_y)
-        edge2 = (curMousePos[0] - diff_x, curMousePos[1] - diff_y)
-        edge3 = (self._oldMousePos[0] - diff_x, self._oldMousePos[1] - diff_y)
-        edge4 = (self._oldMousePos[0] + diff_x, self._oldMousePos[1] + diff_y)
-
-        rectangle_points = [edge1, edge2, edge3, edge4]
-        pygame.draw.polygon(self._screen, "black", rectangle_points)
-        pygame.display.update()
-
-        # 마우스 위치 기록
         self._oldMousePos = curMousePos
 
     def _Print(self, printColor):
