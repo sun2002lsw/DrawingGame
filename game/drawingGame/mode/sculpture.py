@@ -61,6 +61,7 @@ class Sculpture:
         self._originalBoard = self._screen.copy()
         self._printed = True
 
+        # 파인 곳(검정색)은 흰색으로 바꾸고 나머지(도화지) 부분은 색칠 해주기
         width, height = self._screen.get_size()
         for x in range(width):
             for y in range(height):
@@ -68,6 +69,10 @@ class Sculpture:
                     self._screen.set_at((x, y), (255, 255, 255, 255))
                 else:
                     self._screen.set_at((x, y), printColor)
+
+        # 도화지에 찍는거니깐 좌우 반전이 되어야 함
+        flippedBoard = pygame.transform.flip(self._screen, True, False)
+        self._screen.blit(flippedBoard, (0, 0))
 
         pygame.display.update()
 
