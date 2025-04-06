@@ -1,2 +1,2 @@
-from .sculpture import *
 from .brush import *
+from .sculpture import *

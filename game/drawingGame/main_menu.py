@@ -1,5 +1,4 @@
-from game.etc import *
-from game.ui import *
+from .game import *
 from .mode import *
 
 
@@ -19,7 +18,8 @@ class MainMenu:
             self._SelectGameMode()
             ScreenBlackOut(self._screen)
 
-            self._selectedMode.Play()
+            game = Game(self._screen, self._selectedMode)
+            game.Play()
             ScreenBlackOut(self._screen)
 
     # 흰 바탕에 제목만 그리기
@@ -97,7 +97,7 @@ class MainMenu:
 
     # 각 게임 모드를 선택
     def _SelectSculptureGame(self):
-        self._selectedMode = Sculpture(self._screen)
+        self._selectedMode = Sculpture()
 
     def _SelectBrushGame(self):
-        self._selectedMode = Brush(self._screen)
+        self._selectedMode = Brush()
