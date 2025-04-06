@@ -1,6 +1,14 @@
 from game.ui import *
 from game.etc import *
 
+from datetime import datetime
+import tkinter as tk
+from tkinter import messagebox
+from tkinter import filedialog
+
+root = tk.Tk()
+root.withdraw()
+
 
 class Game:
     def __init__(self, screen, gameMode):
@@ -28,6 +36,10 @@ class Game:
                     self._HandleInterfaceClick(mousePos, mousePressing, event.type)
                 self._gameMode.ResetOldMousePos()
                 continue
+
+            # 버튼 클릭으로 팝업이 뜨면 마우스 위치가 아직 호버링 위치에 있는 것으로 인식되어 
+            # 버튼이 계속 active 상태로 출력됨. 그냥 상시적으로 호버링 체크를 해주자
+            self._HandleButtonHovering(mousePos)
 
             # 아래쪽의 화이트보드 영역 처리
             for event in pygame.event.get():
@@ -73,18 +85,45 @@ class Game:
         self._oldScreens = [self._screen.copy()]
 
     def _Print(self):
+        self._pressingPower = 0
+
         print("인쇄하쟈~~~")
 
     def _Save(self):
-        print("저장하쟈~~~")
+        self._pressingPower = 0
+
+        whiteBoardRect = pygame.Rect(0, self._interfaceHeight, self._width, self._height)
+        whiteBoardSurface = pygame.Surface(whiteBoardRect.size)
+        whiteBoardSurface.blit(self._screen, (0, 0), whiteBoardRect)
+
+        now = datetime.now()
+        formatted_date = now.strftime("%m월 %d일 %H시 %M분")
+        fileName = self._gameMode.Name() + " - " + formatted_date + ".png"
+        pygame.image.save(whiteBoardSurface, fileName)
+
+        messagebox.showinfo("저장 완료", fileName)
 
     def _Load(self):
-        print("로드하쟈~~~")
+        self._pressingPower = 0
+
+        filetype = ("그림 파일 선택", "*.png")
+        filePath = filedialog.askopenfilename(title="파일 선택", filetypes=[filetype])
+
+        imageSurface = pygame.image.load(filePath)
+        self._screen.blit(imageSurface, (0, self._interfaceHeight))
+        self._gameMode.DrawBoard(self._screen)
+        pygame.display.flip()
+
+        self._oldScreens.append(self._screen.copy())
 
     def _ShareOut(self):
+        self._pressingPower = 0
+
         print("공유하쟈~~~")
 
     def _ShareIn(self):
+        self._pressingPower = 0
+
         print("복붙하쟈~~~")
 
     def _HandleInterfaceClick(self, mousePos, mousePressing, eventType):

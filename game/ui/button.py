@@ -1,6 +1,7 @@
 import os
 import json
 import pygame
+import pygetwindow as gw
 
 BUTTON_SIZE = 120
 
@@ -67,6 +68,11 @@ class Button:
         pygame.mixer.Sound.play(self._clickSound)
         self._DrawActiveButton(35)
         self._clickFunc()
+
+        # 클릭에 따른 메시지 박스 등으로 포커스가 나갔을 수 있음
+        caption = pygame.display.get_caption()[0]
+        window = gw.getWindowsWithTitle(caption)
+        window[0].activate()
         return True
 
     # 마우스 위치가 버튼에 들어 있는지 확인하고, 적절하게 처리

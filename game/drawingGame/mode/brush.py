@@ -8,6 +8,9 @@ class Brush:
         self._height = height
         self._molarity = 100
 
+    def Name(self):
+        return "조각하기"
+
     def ResetOldMousePos(self):
         return
 
