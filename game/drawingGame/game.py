@@ -14,10 +14,10 @@ class Game:
         self._interfaceHeight = self._height * 2 / 10
 
         self._buttons = None
+        self._oldScreens = list()
 
     def Play(self):
         self._DrawBoard()
-        self._gameMode.DrawBoard(self._screen)
 
         while True:
             # 위쪽의 인터페이스 영역 처리
@@ -33,13 +33,26 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
                     if pygame.K_0 <= event.key <= pygame.K_5:
-                        self._pressingPower = event.key - pygame.K_0
+                        curPressingPower = event.key - pygame.K_0
+                        if curPressingPower == 0 and self._pressingPower > 0:
+                            self._oldScreens.append(self._screen.copy())
+                        self._pressingPower = curPressingPower
 
                 if event.type == pygame.MOUSEMOTION:
                     self._gameMode.HandleMouseMove(self._screen, event.pos, self._pressingPower, self._interfaceHeight)
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    if 4 <= event.button <= 5:
+                    if not self._pressingPower and event.button == 1 and len(self._oldScreens) > 1:  # 왼쪽 버튼
+                        self._oldScreens.pop()
+                        self._screen.blit(self._oldScreens[-1], (0, 0))
+                        self._gameMode.DrawBoard(self._screen)
+                        pygame.display.flip()
+                    if not self._pressingPower and event.button == 3:  # 오른쪽 버튼
+                        self._oldScreens = self._oldScreens[:1]
+                        self._screen.blit(self._oldScreens[0], (0, 0))
+                        self._gameMode.DrawBoard(self._screen)
+                        pygame.display.flip()
+                    if 4 <= event.button <= 5:  # 휠 돌리기
                         self._gameMode.HandleMouseWheel(self._screen, event.button)
 
             pygame.display.flip()
@@ -47,7 +60,7 @@ class Game:
     def _DrawBoard(self):
         self._screen.fill("white")
         pygame.draw.rect(self._screen, "black", (0, 0, self._width, self._interfaceHeight))
-        pygame.display.flip()
+        self._gameMode.DrawBoard(self._screen)
 
         buttonY = self._interfaceHeight / 2
         button1 = Button(self._screen, self._width * 1 / 10, buttonY, "인쇄하기", self._Print)
@@ -57,6 +70,7 @@ class Game:
         button5 = Button(self._screen, self._width * 9 / 10, buttonY, "수신하기", self._ShareIn)
 
         self._buttons = [button1, button2, button3, button4, button5]
+        self._oldScreens = [self._screen.copy()]
 
     def _Print(self):
         print("인쇄하쟈~~~")
