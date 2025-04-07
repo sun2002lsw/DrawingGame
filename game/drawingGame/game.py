@@ -37,7 +37,7 @@ class Game:
                 self._gameMode.ResetOldMousePos()
                 continue
 
-            # 버튼 클릭으로 팝업이 뜨면 마우스 위치가 아직 호버링 위치에 있는 것으로 인식되어 
+            # 버튼 클릭으로 팝업이 뜨면, 마우스 위치가 아직 호버링 위치에 있는 것으로 인식되어
             # 버튼이 계속 active 상태로 출력됨. 그냥 상시적으로 호버링 체크를 해주자
             self._HandleButtonHovering(mousePos)
 
@@ -67,6 +67,7 @@ class Game:
                     if 4 <= event.button <= 5:  # 휠 돌리기
                         self._gameMode.HandleMouseWheel(self._screen, event.button)
 
+            # 변경사항 적용
             pygame.display.flip()
 
     def _DrawBoard(self):
@@ -78,8 +79,8 @@ class Game:
         button1 = Button(self._screen, self._width * 1 / 10, buttonY, "인쇄하기", self._Print)
         button2 = Button(self._screen, self._width * 3 / 10, buttonY, "저장하기", self._Save)
         button3 = Button(self._screen, self._width * 5 / 10, buttonY, "불러오기", self._Load)
-        button4 = Button(self._screen, self._width * 7 / 10, buttonY, "전송하기", self._ShareOut)
-        button5 = Button(self._screen, self._width * 9 / 10, buttonY, "수신하기", self._ShareIn)
+        button4 = Button(self._screen, self._width * 7 / 10, buttonY, "공유하기", self._Share)
+        button5 = Button(self._screen, self._width * 9 / 10, buttonY, "색 고르기", self._ChangeColor)
 
         self._buttons = [button1, button2, button3, button4, button5]
         self._oldScreens = [self._screen.copy()]
@@ -92,23 +93,47 @@ class Game:
     def _Save(self):
         self._pressingPower = 0
 
+        # 경로 폴더 없으면 만들기
+        savedDir = os.path.join(os.getcwd(), "saved")
+        if not os.path.exists(savedDir):
+            os.makedirs(savedDir)
+
+        targetPath = os.path.join(os.getcwd(), f"saved\\{self._gameMode.Name()}")
+        if not os.path.exists(targetPath):
+            os.makedirs(targetPath)
+
+        # 전체 화면에서 아래쪽 화이트보드 부분만 추출
         whiteBoardRect = pygame.Rect(0, self._interfaceHeight, self._width, self._height)
         whiteBoardSurface = pygame.Surface(whiteBoardRect.size)
         whiteBoardSurface.blit(self._screen, (0, 0), whiteBoardRect)
 
+        # 현재 날짜시각을 파일 이름으로 하여 이미지 저장
         now = datetime.now()
         formatted_date = now.strftime("%m월 %d일 %H시 %M분")
-        fileName = self._gameMode.Name() + " - " + formatted_date + ".png"
-        pygame.image.save(whiteBoardSurface, fileName)
+        fileName = f"{self._gameMode.Name()} - {formatted_date}.png"
+        filePath = os.path.join(targetPath, fileName)
 
-        messagebox.showinfo("저장 완료", fileName)
+        pygame.image.save(whiteBoardSurface, filePath)
+        messagebox.showinfo("저장 완료", formatted_date)
 
     def _Load(self):
         self._pressingPower = 0
 
-        filetype = ("그림 파일 선택", "*.png")
-        filePath = filedialog.askopenfilename(title="파일 선택", filetypes=[filetype])
+        # 경로 폴더 없으면 만들기
+        savedDir = os.path.join(os.getcwd(), "saved")
+        if not os.path.exists(savedDir):
+            os.makedirs(savedDir)
 
+        targetPath = os.path.join(os.getcwd(), f"saved\\{self._gameMode.Name()}")
+        if not os.path.exists(targetPath):
+            os.makedirs(targetPath)
+
+        # 저장된 화이트보드 찾기
+        targetPath = os.path.join(os.getcwd(), f"saved\\{self._gameMode.Name()}")
+        filetype = ("저장된 그림", "*.png")
+        filePath = filedialog.askopenfilename(title="파일 선택", initialdir=targetPath, filetypes=[filetype])
+
+        # 불러온 이미지를 아래쪽 화이트보드에 적용 (크기는 일치한다고 가정함)
         imageSurface = pygame.image.load(filePath)
         self._screen.blit(imageSurface, (0, self._interfaceHeight))
         self._gameMode.DrawBoard(self._screen)
@@ -116,15 +141,15 @@ class Game:
 
         self._oldScreens.append(self._screen.copy())
 
-    def _ShareOut(self):
+    def _Share(self):
         self._pressingPower = 0
 
-        print("공유하쟈~~~")
+        messagebox.showerror("공유하기", "인터넷에 연결되지 않아 공유할 수 없습니다")
 
-    def _ShareIn(self):
+    def _ChangeColor(self):
         self._pressingPower = 0
 
-        print("복붙하쟈~~~")
+        messagebox.showinfo("색을 골라 주세요", "고르라고 씨발")
 
     def _HandleInterfaceClick(self, mousePos, mousePressing, eventType):
         if eventType == pygame.QUIT:

@@ -9,7 +9,7 @@ class Brush:
         self._molarity = 100
 
     def Name(self):
-        return "조각하기"
+        return "붓그리기"
 
     def ResetOldMousePos(self):
         return

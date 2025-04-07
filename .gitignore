@@ -173,5 +173,5 @@ cython_debug/
 # pycharm
 .idea/
 
-# draw game
-*.png
+# game save file
+/game/saved/

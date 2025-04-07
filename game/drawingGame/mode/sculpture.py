@@ -8,7 +8,7 @@ class Sculpture:
         self._oldMousePos = None
 
     def Name(self):
-        return "붓그리기"
+        return "조각하기"
     
     def ResetOldMousePos(self):
         self._oldMousePos = None
