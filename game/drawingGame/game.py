@@ -60,6 +60,8 @@ class Game:
                         self._gameMode.DrawBoard(self._screen)
                         pygame.display.flip()
                     if not self._pressingPower and event.button == 3:  # 오른쪽 버튼
+                        if len(self._oldScreens) == 1:
+                            return  # 아무것도 안 그리고 오른쪽 버튼을 누르면 종료로 인식
                         self._oldScreens = self._oldScreens[:1]
                         self._screen.blit(self._oldScreens[0], (0, 0))
                         self._gameMode.DrawBoard(self._screen)
@@ -86,12 +88,29 @@ class Game:
         self._oldScreens = [self._screen.copy()]
 
     def _Print(self):
+        if self._pressingPower:
+            self._oldScreens.append(self._screen.copy())
         self._pressingPower = 0
 
-        print("인쇄하쟈~~~")
+        # 전체 화면에서 아래쪽 화이트보드 부분만 추출
+        whiteBoardRect = pygame.Rect(0, self._interfaceHeight, self._width, self._height - self._interfaceHeight)
+        whiteBoardSurface = pygame.Surface(whiteBoardRect.size)
+        whiteBoardSurface.blit(self._screen, (0, 0), whiteBoardRect)
+
+        # 임시 파일에 저장해서 프린터 호출
+        printSurface = self._gameMode.DecorateSurfaceToPrint(whiteBoardSurface)
+        pygame.image.save(printSurface, "screenshot.png")
+        os.startfile("screenshot.png", "print")
 
     def _Save(self):
+        if self._pressingPower:
+            self._oldScreens.append(self._screen.copy())
         self._pressingPower = 0
+
+        # 전체 화면에서 아래쪽 화이트보드 부분만 추출
+        whiteBoardRect = pygame.Rect(0, self._interfaceHeight, self._width, self._height - self._interfaceHeight)
+        whiteBoardSurface = pygame.Surface(whiteBoardRect.size)
+        whiteBoardSurface.blit(self._screen, (0, 0), whiteBoardRect)
 
         # 경로 폴더 없으면 만들기
         savedDir = os.path.join(os.getcwd(), "saved")
@@ -101,11 +120,6 @@ class Game:
         targetPath = os.path.join(os.getcwd(), f"saved\\{self._gameMode.Name()}")
         if not os.path.exists(targetPath):
             os.makedirs(targetPath)
-
-        # 전체 화면에서 아래쪽 화이트보드 부분만 추출
-        whiteBoardRect = pygame.Rect(0, self._interfaceHeight, self._width, self._height)
-        whiteBoardSurface = pygame.Surface(whiteBoardRect.size)
-        whiteBoardSurface.blit(self._screen, (0, 0), whiteBoardRect)
 
         # 현재 날짜시각을 파일 이름으로 하여 이미지 저장
         now = datetime.now()
@@ -117,6 +131,8 @@ class Game:
         messagebox.showinfo("저장 완료", formatted_date)
 
     def _Load(self):
+        if self._pressingPower:
+            self._oldScreens.append(self._screen.copy())
         self._pressingPower = 0
 
         # 경로 폴더 없으면 만들기
@@ -132,6 +148,8 @@ class Game:
         targetPath = os.path.join(os.getcwd(), f"saved\\{self._gameMode.Name()}")
         filetype = ("저장된 그림", "*.png")
         filePath = filedialog.askopenfilename(title="파일 선택", initialdir=targetPath, filetypes=[filetype])
+        if filePath == "":
+            return
 
         # 불러온 이미지를 아래쪽 화이트보드에 적용 (크기는 일치한다고 가정함)
         imageSurface = pygame.image.load(filePath)
@@ -142,14 +160,18 @@ class Game:
         self._oldScreens.append(self._screen.copy())
 
     def _Share(self):
+        if self._pressingPower:
+            self._oldScreens.append(self._screen.copy())
         self._pressingPower = 0
 
         messagebox.showerror("공유하기", "인터넷에 연결되지 않아 공유할 수 없습니다")
 
     def _ChangeColor(self):
+        if self._pressingPower:
+            self._oldScreens.append(self._screen.copy())
         self._pressingPower = 0
 
-        messagebox.showinfo("색을 골라 주세요", "고르라고 씨발")
+        self._gameMode.ChangeColor()
 
     def _HandleInterfaceClick(self, mousePos, mousePressing, eventType):
         if eventType == pygame.QUIT:
