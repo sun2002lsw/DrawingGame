@@ -173,6 +173,7 @@ cython_debug/
 # pycharm
 .idea/
 
-# game save file
+# game files
+/game/*.exe
 /game/saved/
 /game/screenshot.png
