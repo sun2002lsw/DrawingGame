@@ -31,21 +31,27 @@ class Game:
             # 위쪽의 인터페이스 영역 처리
             mousePos = pygame.mouse.get_pos()
             if mousePos[1] <= self._height * 2 / 10:
+                cursor = pygame.cursors.Cursor(pygame.SYSTEM_CURSOR_ARROW)
+                pygame.mouse.set_cursor(cursor)
+
                 for event in pygame.event.get():
                     mousePressing = pygame.mouse.get_pressed()[0]  # 왼쪽 마우스를 누르고 움직일 때
                     self._HandleInterfaceClick(mousePos, mousePressing, event.type)
                 self._gameMode.ResetOldMousePos()
                 continue
 
-            # 버튼 클릭으로 팝업이 뜨면, 마우스 위치가 아직 호버링 위치에 있는 것으로 인식되어
+            # 인터페이스 버튼 클릭으로 팝업이 뜨면, 마우스 위치가 아직 호버링 위치에 있는 것으로 인식되어
             # 버튼이 계속 active 상태로 출력됨. 그냥 상시적으로 호버링 체크를 해주자
             self._HandleButtonHovering(mousePos)
 
             # 아래쪽의 화이트보드 영역 처리
+            cursor = pygame.cursors.Cursor(pygame.SYSTEM_CURSOR_CROSSHAIR)
+            pygame.mouse.set_cursor(cursor)
+
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
-                    if pygame.K_0 <= event.key <= pygame.K_5:
-                        curPressingPower = event.key - pygame.K_0
+                    if pygame.K_a <= event.key <= pygame.K_z:
+                        curPressingPower = event.key - pygame.K_a
                         if curPressingPower == 0 and self._pressingPower > 0:
                             self._oldScreens.append(self._screen.copy())
                         self._pressingPower = curPressingPower

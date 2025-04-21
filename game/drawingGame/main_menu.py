@@ -10,16 +10,24 @@ class MainMenu:
         self._width = width
         self._height = height
 
-        # 메뉴 그리기 -> 메뉴 선택하기 -> 게임하기 반복
+        # 마우스 커서 바꾸기 -> 메뉴 그리기 -> 메뉴 선택하기 -> 게임하기 반복
         while True:
+            cursor = pygame.cursors.Cursor(pygame.SYSTEM_CURSOR_HAND)
+            pygame.mouse.set_cursor(cursor)
             self._ClearScreenWithTitle()
 
             self._selectedMode = None
             self._SelectGameMode()
+
+            cursor = pygame.cursors.Cursor(pygame.SYSTEM_CURSOR_WAIT)
+            pygame.mouse.set_cursor(cursor)
             ScreenBlackOut(self._screen)
 
             game = Game(self._screen, self._selectedMode)
             game.Play()
+
+            cursor = pygame.cursors.Cursor(pygame.SYSTEM_CURSOR_WAIT)
+            pygame.mouse.set_cursor(cursor)
             ScreenBlackOut(self._screen)
 
     # 흰 바탕에 제목만 그리기
