@@ -37,7 +37,7 @@ class MainMenu:
         # 화면 대비 적절한 크기로 타이틀 이미지 조정
         imageWidth = self._width / 2
         imageHeight = self._height / 4
-        titleImg = pygame.image.load("./drawingGame/main_menu_title.png")
+        titleImg = pygame.image.load("./data/title.png")
         titleImg = pygame.transform.scale(titleImg, (imageWidth, imageHeight))
 
         # 타이틀 이미지를 화면 중앙부에 위치
