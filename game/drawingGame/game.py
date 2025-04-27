@@ -177,7 +177,7 @@ class Game:
             self._oldScreens.append(self._screen.copy())
         self._pressingPower = 0
 
-        self._gameMode.ChangeColor()
+        self._gameMode.ChangeColor(self._screen)
 
     def _HandleInterfaceClick(self, mousePos, mousePressing, eventType):
         if eventType == pygame.QUIT:

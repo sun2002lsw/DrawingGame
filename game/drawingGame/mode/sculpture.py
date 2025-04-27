@@ -44,5 +44,5 @@ class Sculpture:
         # 도화지에 찍는거니깐 좌우 반전이 되어야 함
         return pygame.transform.flip(surface, True, False)
 
-    def ChangeColor(self):
+    def ChangeColor(self, screen):
         messagebox.showerror("색 고르기", "조각하기는 색을 고를 수 없습니다")
