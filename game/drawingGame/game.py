@@ -80,7 +80,7 @@ class Game:
 
     def _DrawBoard(self):
         self._screen.fill("white")
-        pygame.draw.rect(self._screen, "black", (0, 0, self._width, self._interfaceHeight))
+        pygame.draw.rect(self._screen, (254, 255, 194), (0, 0, self._width, self._interfaceHeight))
         self._gameMode.DrawBoard(self._screen)
 
         buttonY = self._interfaceHeight / 2

@@ -26,11 +26,11 @@ class Button:
         self._hoverSound = pygame.mixer.Sound(hoverSoundPath)
         self._hoverSound.set_volume(0.1)
 
-        pressSoundPath = os.path.join(os.getcwd(), "data/buttonPress.wav")
+        pressSoundPath = os.path.join(os.getcwd(), "data/buttonPress.mp3")
         self._pressSound = pygame.mixer.Sound(pressSoundPath)
         self._pressSound.set_volume(0.3)
 
-        clickSoundPath = os.path.join(os.getcwd(), "data/buttonClick.mp3")
+        clickSoundPath = os.path.join(os.getcwd(), "data/buttonClick.wav")
         self._clickSound = pygame.mixer.Sound(clickSoundPath)
         self._clickSound.set_volume(0.1)
 
@@ -98,23 +98,24 @@ class Button:
     # 버튼 생성
     def _DrawDefaultButton(self):
         self._defaultState = True
-        self._DrawButton(30, "black", "chartreuse4", False)
+        self._DrawButton(30, False)
 
     def _DrawActiveButton(self, textSize):
         self._defaultState = False
-        self._DrawButton(textSize, "white", "chartreuse4", True)
+        self._DrawButton(textSize, True)
 
-    def _DrawFadeoutButton(self):
-        self._defaultState = False
-        self._DrawButton(35, "white", (0, 0, 0), True)
+    def _DrawButton(self, textSize, isBold):
+        imageSize = (self._buttonRect.width, self._buttonRect.height)
+        buttonImg = pygame.image.load("./data/button.png")
+        buttonImg = pygame.transform.scale(buttonImg, imageSize)
+        self._screen.blit(buttonImg, self._buttonRect.topleft)
 
-    def _DrawButton(self, textSize, textColor, backgroundColor, isBold):
         font = pygame.font.SysFont("malgungothic", textSize, isBold, False)
-        surface = font.render(self._text, True, textColor)
+        surface = font.render(self._text, True, "black")
         textRect = surface.get_rect()
         textRect.center = self._buttonRect.center
-
-        pygame.draw.rect(self._screen, backgroundColor, self._buttonRect)
+        textRect.centerx -= 9  # 기획자가 전달해준 그림이 살짝 틀어져서 수동으로 조정
+        textRect.centery -= 5  # 기획자가 전달해준 그림이 살짝 틀어져서 수동으로 조정
         self._screen.blit(surface, textRect)
 
         pygame.display.update(self._buttonRect)

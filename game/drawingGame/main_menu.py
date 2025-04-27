@@ -35,17 +35,13 @@ class MainMenu:
         self._screen.fill("white")
 
         # 화면 대비 적절한 크기로 타이틀 이미지 조정
-        imageWidth = self._width / 2
-        imageHeight = self._height / 4
+        imageWidth = self._width
+        imageHeight = self._height
         titleImg = pygame.image.load("./data/title.png")
         titleImg = pygame.transform.scale(titleImg, (imageWidth, imageHeight))
 
         # 타이틀 이미지를 화면 중앙부에 위치
         rect = titleImg.get_rect()
-        centerX = imageWidth - (titleImg.get_width() / 2)
-        centerY = imageHeight - (titleImg.get_height() / 2)
-        rect = rect.move((centerX, centerY))
-
         self._screen.blit(titleImg, rect)
         pygame.display.flip()
 
@@ -53,9 +49,9 @@ class MainMenu:
     def _SelectGameMode(self):
         # 버튼들 등록
         buttonX = self._width / 2
-        button1 = Button(self._screen, buttonX, self._height * 10 / 20, "조각하기", self._SelectSculptureGame)
-        button2 = Button(self._screen, buttonX, self._height * 13 / 20, "붓 그리기", self._SelectBrushGame)
-        button3 = Button(self._screen, buttonX, self._height * 16 / 20, "나가기", ExitGame)
+        button1 = Button(self._screen, buttonX, self._height * 12 / 20, "조각하기", self._SelectSculptureGame)
+        button2 = Button(self._screen, buttonX, self._height * 15 / 20, "붓 그리기", self._SelectBrushGame)
+        button3 = Button(self._screen, buttonX, self._height * 18 / 20, "나가기", ExitGame)
 
         self._buttons = []
         self._buttons.append(button1)
